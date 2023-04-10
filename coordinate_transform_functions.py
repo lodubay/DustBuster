@@ -61,3 +61,35 @@ def radec_coords(x, y, z, sunpos=(300.5, 300.5, 40.5), gridstep=10):
     sc = SkyCoord(w=cartesian[2], u=cartesian[0], v=cartesian[1],
                   unit='pc', frame='galactic', representation_type='cartesian')
     return sc.icrs
+
+def radec_to_data(ra, dec, dist, sunpos=(300.5, 300.5, 40.5), gridstep=10, frame='icrs'):
+    """
+    Convert RA/DEC coordinates and a distance into X, Y, Z position in the data array
+    
+    Parameters
+    ----------
+    ra : float
+         Target's right ascension in decimal degrees
+    dec : float
+          Target's declination in decimal degrees
+    dist : float
+           Target's distance in pc
+    sunpos : 3-tuple, optional
+        Position of the sun in data coordinates. The default is (300.5, 300.5, 40.5).
+    gridstep : float, optional
+        Data grid step size in pc. The default is 10.
+    frame : string, optional
+        SkyCoord coordinate frame string. The default is 'icrs'.
+    
+    Returns
+    ----------
+    x, y, z : 3-tuple of floats
+        Data array coordinates
+    """
+    sc = SkyCoord(ra=ra*u.degree, dec=dec*u.degree, distance=dist*u.pc, frame=frame)
+    sc = sc.galactic
+    sc.representation_type = 'cartesian'
+    datapoint = np.array((sc.u.value, sc.v.value, sc.w.value))
+    data_coords = (datapoint / gridstep) + np.array(sunpos)
+    
+    return tuple(data_coords)
