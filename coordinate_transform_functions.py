@@ -2,6 +2,7 @@
 
 import numpy as np
 from astropy.coordinates import SkyCoord
+import astropy.units as u
 
 def galactic_coords(x, y, z, sunpos=(300.5, 300.5, 40.5), gridstep=10):
     """
