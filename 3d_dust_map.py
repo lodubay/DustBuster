@@ -9,24 +9,30 @@ import plotly.graph_objects as go
 
 # plot range in pc
 # [(xmin, xmax), (ymin, ymax), (zmin, zmax)]
-plot_range = [(-3005, 3005), (-3005, 3005), (-405, 405)]
+plot_range = [(-3005, 2995), (-3005, 2995), (-405, 395)]
 # location of Sun (origin) in data grid units
 sun_pos = (300.5, 300.5, 40.5)
 # parsecs per grid step
 gridstep_pc = 10
+# number of indices to skip between samples in (x, y, z) axes
+sampling = 4
 
 # import data
 hdul = fits.open('data/cube_ext.fits')
 data = hdul[0].data
 # invert data axes
 data = np.swapaxes(data, 0, 2)
+# downsample
+data = data[::sampling, ::sampling, ::sampling]
+gridstep_pc *= sampling
+sun_pos = (sun_pos[0]/sampling, sun_pos[1]/sampling, sun_pos[2]/sampling)
 print(data.shape)
 
 # fix issues with user-defined plot range
 for i in range(3):
     # adjust to proper spacing
-    plot_range[i] =  (round(plot_range[i][0] - 5, -1) + 5,
-                      round(plot_range[i][1] - 5, -1) + 5)
+    # plot_range[i] =  (round(plot_range[i][0] - 5, -1) + 5,
+    #                   round(plot_range[i][1] - 5, -1) + 5)
     # maximum plot range in given axis
     plot_range[i] = (max(plot_range[i][0], 
                          -sun_pos[i] * gridstep_pc),
@@ -42,6 +48,7 @@ for i in range(3):
     xmax = int(plot_range[i][1] / gridstep_pc + sun_pos[i]) + 1
     bounds.append(slice(max(xmin, 0), 
                         min(xmax, data.shape[i])))
+print(bounds)
 # subset of data cube
 subset = data[tuple(bounds)]
 
@@ -61,7 +68,7 @@ fig = go.Figure(
         isomin=1e-3,
     #     isomax=0.8,
         opacity=0.1, # needs to be small to see through all surfaces
-        surface_count=10, # needs to be a large number for good volume rendering
+        surface_count=20, # needs to be a large number for good volume rendering
         colorbar=dict(
             title='Extinction density [nanomag/pc]'
         )
