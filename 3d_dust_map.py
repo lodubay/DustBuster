@@ -75,7 +75,7 @@ fig = go.Figure(
             isomin=1e-3,
         #     isomax=0.8,
             opacity=0.1, # needs to be small to see through all surfaces
-            surface_count=20, # needs to be a large number for good volume rendering
+            surface_count=30, # needs to be a large number for good volume rendering
             colorbar=dict(
                 title='Extinction density [nanomag/pc]'
             )
@@ -85,7 +85,8 @@ fig = go.Figure(
             x=CygOB2_coords[0:1],
             y=CygOB2_coords[1:2],
             z=CygOB2_coords[2:],
-            mode='markers'
+            text=['Cygnus OB2'],
+            mode='markers+text'
         )
     ]
 )
