@@ -77,7 +77,7 @@ fig = go.Figure(
             opacity=0.1, # needs to be small to see through all surfaces
             surface_count=30, # needs to be a large number for good volume rendering
             colorbar=dict(
-                title='Extinction density [nanomag/pc]'
+                title='Extinction density [mag/pc]'
             )
         ),
         # plot location of Cygnus OB2
