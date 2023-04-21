@@ -1,6 +1,6 @@
 """
-Create an interactive 3D plot of the Lallement et al. (2022) differential
-extinction map.
+Create an interactive 3D plot of ISM density based on the Lallement et al. 
+(2022) differential extinction map and assuming a global dust-to-gas ratio.
 """
 
 from astropy.io import fits
@@ -35,6 +35,10 @@ data = np.swapaxes(data, 0, 2)
 data = data[::sampling, ::sampling, ::sampling]
 gridstep_pc *= sampling
 sun_pos /= sampling
+
+# convert extinction density in mag.pc^-1 to gas density in cm^-3
+data *= _globals.gas_to_dust / u.pc.to('cm')
+# data = np.log10(data)
 
 # fix issues with user-defined plot range
 for i in range(3):
@@ -72,12 +76,12 @@ fig = go.Figure(
             y=Y.flatten(),
             z=Z.flatten(),
             value=subset.flatten(),
-            isomin=1e-3,
+            isomin=0.1,
         #     isomax=0.8,
             opacity=0.1, # needs to be small to see through all surfaces
-            surface_count=30, # needs to be a large number for good volume rendering
+            surface_count=20, # needs to be a large number for good volume rendering
             colorbar=dict(
-                title='Extinction density [mag/pc]'
+                title='log H gas density [cm^-3]'
             )
         ),
         # plot location of Cygnus OB2 and the Sun
@@ -99,8 +103,8 @@ fig.update_layout(
     ),
     scene_aspectmode='data',
     title=dict(
-        text='Volumetric Extinction Density Map (Lallement et al. 2022)'
+        text=r'Volumetric ISM Density Map (Lallement et al. 2022, assuming NH/Av=%.01e)' % _globals.gas_to_dust
     )
 )
 
-fig.write_html('plots/3d_dust_map.html')
+fig.write_html('plots/3d_gas_map.html')

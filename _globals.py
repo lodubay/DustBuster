@@ -15,3 +15,6 @@ sun_pos = (300.5, 300.5, 40.5)
 
 # Physical gridstep size in pc
 gridstep_pc = 10
+
+# Ratio of gas column density to V-band extinction (cm^-2 mag^-1)
+gas_to_dust = 1.9e21
